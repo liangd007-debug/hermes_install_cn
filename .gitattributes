@@ -1,0 +1,6 @@
+# line endings
+* text=auto
+*.sh text eol=lf
+*.ps1 text eol=crlf
+*.exe binary
+dist/hermes-install-cn-linux-x86_64 binary
