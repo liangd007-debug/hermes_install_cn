@@ -20,9 +20,9 @@
 
 | 产物 | 文件 | 说明 |
 | ---- | ---- | ---- |
-| Windows 命令行版 | `dist\hermes-install-cn.exe` | 内嵌母本 install-cn.ps1，双击或命令行均可 |
-| Windows 图形版 | `dist\hermes-install-cn-gui.exe` | 参数上界面、日志实时滚动、底部进度条 |
-| Linux/Kali 版 | `dist/hermes-install-cn-linux-x86_64` | shc 编译的单文件 ELF，源码为 `linux/install-cn.sh` |
+| Windows 命令行版 | `dist\windows-hermes-install-cn-cli-x64.exe` | 内嵌母本 install-cn.ps1，双击或命令行均可 |
+| Windows 图形版 | `dist\windows-hermes-install-cn-gui-x64.exe` | 参数上界面、日志实时滚动、底部进度条 |
+| Linux/Kali 版 | `dist/linux-hermes-install-cn-x86_64` | shc 编译的单文件 ELF，源码为 `linux/install-cn.sh` |
 
 ### 1.3、固定默认行为（没有开关，脚本内部自动管理）
 
@@ -58,13 +58,13 @@ hermes_install_cn/
 powershell -NoProfile -ExecutionPolicy Bypass -File C:\temp\hermes_install_cn\install-cn.ps1
 ```
 
-- 双击 `dist\hermes-install-cn.exe` 效果相同；exe 启动时会把窗口**锁定**（宽度钉 130 列、去掉拉伸边框、禁用最大化），避免安装中改窗口尺寸把进度显示拖花，退出时归还窗口样式；
+- 双击 `dist\windows-hermes-install-cn-cli-x64.exe` 效果相同；exe 启动时会把窗口**锁定**（宽度钉 130 列、去掉拉伸边框、禁用最大化），避免安装中改窗口尺寸把进度显示拖花，退出时归还窗口样式；
 - 验绿标志：`[OK] app products and hermes command ready` → `Desktop ready: …\Hermes.exe` → `Hermes Agent install complete`；
 - 装完体检：`hermes doctor`（全新安装唯一 issue 应为"配置 API key"）。
 
 ### 2.2、Windows 图形版
 
-- 双击 `dist\hermes-install-cn-gui.exe`；
+- 双击 `dist\windows-hermes-install-cn-gui-x64.exe`；
 - 界面只有三个需要决定的参数：**代理**（留空不用，例 `66.66.66.1:10808`）、**固化镜像变量到用户环境**、**只装命令行版**；其余行为按 1.3 固定；
 - 日志窗两种颜色：灰白 = 标准输出，**暗黄 = 标准错误流**——注意 uv/npm 的惯例是把**进度**写进错误流，暗黄行多为正常进度，不是错误；
 - 底部蓝色滑动进度条运行时出现、结束消失；失败后直接再点"开始安装"重跑，已下完的走缓存。
@@ -76,11 +76,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\temp\hermes_install_cn\in
 bash install-cn.sh
 
 # 方式二：单文件二进制
-chmod +x hermes-install-cn-linux-x86_64
-./hermes-install-cn-linux-x86_64
+chmod +x linux-hermes-install-cn-x86_64
+./linux-hermes-install-cn-x86_64
 
 # 只体检不安装：7 站连通性测试 + 选线结果
-./hermes-install-cn-linux-x86_64 --probe-only
+./linux-hermes-install-cn-x86_64 --probe-only
 ```
 
 装完三步走：
@@ -96,7 +96,7 @@ hermes desktop         # 启动桌面版（首次会注册应用菜单项）
 - 已装完的机器补图标（不重装）：
 
 ```bash
-./hermes-install-cn-linux-x86_64 --make-desktop-icon
+./linux-hermes-install-cn-x86_64 --make-desktop-icon
 ```
 
 ---
@@ -195,7 +195,7 @@ setx ELECTRON_BUILDER_BINARIES_MIRROR https://registry.npmmirror.com/-/binary/el
 powershell -NoProfile -ExecutionPolicy Bypass -File C:\temp\hermes_install_cn\src\build.ps1
 
 # 自检：只解包内嵌脚本并打印 sha256，不触发安装
-C:\temp\hermes_install_cn\dist\hermes-install-cn.exe --selftest
+C:\temp\hermes_install_cn\dist\windows-hermes-install-cn-cli-x64.exe --selftest
 ```
 
 - **母本唯一**：两个 exe 都在编译期把 `install-cn.ps1` 内嵌进去（csc `/resource`），改了 ps1 必须重编，否则 exe 跑的还是旧脚本；
@@ -212,10 +212,10 @@ bash -n install-cn.sh
 sed '1s|.*|#!/bin/bash|' install-cn.sh > install-bin.sh
 
 # Kali root 登录 shell 是 zsh，shc 只认 sh/bash 族：显式指定
-SHELL=/bin/bash shc -f install-bin.sh -o hermes-install-cn
+SHELL=/bin/bash shc -f install-bin.sh -o linux-hermes-install-cn-x86_64
 
 # 产物自跑（安全段）
-./hermes-install-cn --probe-only
+./linux-hermes-install-cn-x86_64 --probe-only
 ```
 
 - ⚠️ 别在中文 Windows 的记事本里编辑 `.sh`（换行/编码会被毁），改脚本在 Kali 上改；
