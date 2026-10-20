@@ -212,12 +212,13 @@ bash -n install-cn.sh
 sed '1s|.*|#!/bin/bash|' install-cn.sh > install-bin.sh
 
 # Kali root 登录 shell 是 zsh，shc 只认 sh/bash 族：显式指定
-SHELL=/bin/bash shc -f install-bin.sh -o linux-hermes-install-cn-x86_64
+SHELL=/bin/bash shc -r -f install-bin.sh -o linux-hermes-install-cn-x86_64
 
 # 产物自跑（安全段）
 ./linux-hermes-install-cn-x86_64 --probe-only
 ```
 
+- ⚠️ **`-r` 必须带**：不带 `-r` 的产物会把**编译机 `/bin/bash` 的文件属性（inode/size/mtime 等）折进加密密钥**（shc 的 `key_with_file` 机制），拿到 bash 版本不同的机器上就解密失败——屏幕上吐一串乱码后 exit 1。`-r` 跳过文件属性绑定，任意 Kali 可跑（2026-10 在 2025.3 学生机实测：不带 `-r` 乱码、带 `-r` 正常）。
 - ⚠️ 别在中文 Windows 的记事本里编辑 `.sh`（换行/编码会被毁），改脚本在 Kali 上改；
 - shc 产物运行时会把脚本解密到 `/tmp` 执行（机制使然），目标机 `/tmp` 需可写。
 
